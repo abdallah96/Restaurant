@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { verifyToken } from '@/lib/auth/jwt';
 
 export async function POST(request: NextRequest) {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     // Generate unique filename
     const fileExt = file.name.split('.').pop();

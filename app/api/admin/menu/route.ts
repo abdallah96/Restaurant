@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { verifyToken } from '@/lib/auth/jwt';
 
 // Get all menu items (admin view - includes unavailable items)
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { data: menuItems, error } = await supabase
       .from('menu_items')
       .select('*')
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Name, price, and category are required' }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { data: menuItem, error } = await supabase
       .from('menu_items')
       .insert({
@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest) {
     if (is_available !== undefined) updateData.is_available = is_available;
     if (stock_quantity !== undefined) updateData.stock_quantity = stock_quantity;
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { data: menuItem, error } = await supabase
       .from('menu_items')
       .update(updateData)
@@ -130,7 +130,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Item ID is required' }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { error } = await supabase
       .from('menu_items')
       .delete()

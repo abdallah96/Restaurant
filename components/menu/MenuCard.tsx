@@ -9,8 +9,18 @@ export function MenuCard({ item, onAddToCart }: MenuCardProps) {
   return (
     <div className="group bg-white rounded-2xl overflow-hidden card-hover border-2 border-gray-100 hover:border-orange-300 transition-all">
       <div className="relative h-56 bg-gradient-to-br from-orange-100 via-orange-50 to-orange-50 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 african-pattern opacity-20"></div>
-        <span className="text-7xl relative z-10 group-hover:scale-110 transition-transform duration-300">🍽️</span>
+        {item.image_url ? (
+          <img 
+            src={item.image_url} 
+            alt={item.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 african-pattern opacity-20"></div>
+            <span className="text-7xl relative z-10 group-hover:scale-110 transition-transform duration-300">🍽️</span>
+          </>
+        )}
         {!item.is_available && (
           <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
             <span className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm">Indisponible</span>

@@ -18,7 +18,6 @@ export default function MenuPage() {
       id: item.id,
       name: item.name,
       price: item.price,
-      quantity: 1,
       type: 'menu_item',
       image_url: item.image_url,
     });

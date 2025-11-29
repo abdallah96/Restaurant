@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { verifyToken } from '@/lib/auth/jwt';
 
 export async function GET(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const { data, error } = await supabase
       .from('daily_specials')
       .select('*')
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const body = await request.json();
 
     const { data, error } = await supabase
@@ -68,7 +68,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const body = await request.json();
     const { id, ...updates } = body;
 
@@ -104,7 +104,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');
 

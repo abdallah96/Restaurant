@@ -35,7 +35,6 @@ export default function AdminPage() {
         if (lastOrderCount > 0 && newOrders.length > lastOrderCount) {
           // New order detected!
           if (audioRef.current) {
-            audioRef.current.play().catch(e => console.log('Audio play failed:', e))
           }
           toast.success('🔔 Nouvelle commande re\u00e7ue!', {
             duration: 5000,

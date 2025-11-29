@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white/90 transition-all"
-                placeholder="admin@restaurant.sn"
+                placeholder="votre.email@exemple.com"
                 disabled={loading}
               />
             </div>
@@ -132,11 +132,6 @@ export default function AdminLoginPage() {
             </p>
           </div>
           
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-800 font-medium">
-              Identifiants par défaut : <span className="font-mono bg-gray-200 px-2 py-1 rounded text-gray-900">admin@restaurant.sn</span> / <span className="font-mono bg-gray-200 px-2 py-1 rounded text-gray-900">admin123</span>
-            </p>
-          </div>
         </div>
 
         <div className="text-center mt-6 text-sm">
