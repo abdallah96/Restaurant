@@ -11,6 +11,8 @@ export default function AdminDailySpecialsPage() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingItem, setEditingItem] = useState<DailySpecial | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -101,11 +103,13 @@ export default function AdminDailySpecialsPage() {
       active_date: item.active_date,
       stock_quantity: item.stock_quantity,
     })
+    setImagePreview(item.image_url || null)
     setShowModal(true)
   }
 
   const resetForm = () => {
     setEditingItem(null)
+    setImagePreview(null)
     setFormData({
       name: '',
       description: '',
@@ -115,6 +119,48 @@ export default function AdminDailySpecialsPage() {
       active_date: new Date().toISOString().split('T')[0],
       stock_quantity: 50,
     })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Veuillez sélectionner une image')
+      return
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('L\'image est trop grande (max 5MB)')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        setFormData(prev => ({ ...prev, image_url: data.url }))
+        setImagePreview(data.url)
+        toast.success('Image téléchargée!')
+      } else {
+        toast.error(data.error || 'Erreur de téléchargement')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast.error('Erreur de téléchargement')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -287,15 +333,66 @@ export default function AdminDailySpecialsPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  URL de l'image
+                  Image du plat
                 </label>
-                <input
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  placeholder="https://example.com/image.jpg"
-                />
+                
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="mb-4 relative">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-48 object-cover rounded-xl border-2 border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImagePreview(null)
+                        setFormData({ ...formData, image_url: '' })
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                
+                {/* Upload Button */}
+                <div className="flex gap-2">
+                  <label className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                    <div className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl hover:border-orange-500 cursor-pointer transition-colors text-center">
+                      {uploading ? (
+                        <span className="text-gray-600">📤 Téléchargement...</span>
+                      ) : (
+                        <span className="text-gray-600">📷 Cliquez pour télécharger une image</span>
+                      )}
+                    </div>
+                  </label>
+                </div>
+                
+                {/* Or URL Input */}
+                <div className="mt-2">
+                  <div className="text-center text-sm text-gray-500 mb-2">ou</div>
+                  <input
+                    type="url"
+                    value={formData.image_url}
+                    onChange={(e) => {
+                      setFormData({ ...formData, image_url: e.target.value })
+                      setImagePreview(e.target.value)
+                    }}
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                    placeholder="Ou collez l'URL d'une image"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2">

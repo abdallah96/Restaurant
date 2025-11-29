@@ -77,21 +77,21 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
                 <span>📍</span>
-                <span>Dakar, Sénégal</span>
+                <span>Ouakam, Enface du Lycée Jean Mermoz</span>
               </li>
               <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
                 <span>📞</span>
-                <span>+221 XX XXX XX XX</span>
+                <span>+221 77 612 83 50 / +221 77 410 52 70</span>
               </li>
-              <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
+              {/* <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
                 <span>✉️</span>
                 <span>contact@keurgui.sn</span>
-              </li>
+              </li> */}
               <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
                 <span>🕒</span>
                 <div>
-                  <div>Lun-Dim</div>
-                  <div className="text-xs">10h00 - 22h00</div>
+                  <div>Lun-Sam</div>
+                  <div className="text-xs">10h00 - 00h00</div>
                 </div>
               </li>
             </ul>
@@ -105,7 +105,7 @@ export function Footer() {
               &copy; {new Date().getFullYear()} Keur Gui. Tous droits réservés.
             </p>
             <p className="text-gray-900 text-xs font-medium bg-white/80 px-4 py-2 rounded-lg">
-              Fait avec <span className="text-orange-600">♥</span> au Sénégal
+              Fait par G-Tech avec <span className="text-orange-600">♥</span> au Sénégal
             </p>
           </div>
         </div>

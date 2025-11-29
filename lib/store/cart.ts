@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { CartItem } from '@/types'
+import { trackAddToCart, trackRemoveFromCart, trackUpdateCartQuantity, trackClearCart } from '@/lib/analytics'
 
 interface CartState {
   items: CartItem[]
@@ -29,19 +30,54 @@ export const useCartStore = create<CartState>()(
                 : i
             ),
           })
+          // Track quantity update
+          trackAddToCart({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: 1,
+            type: item.type,
+          })
         } else {
           set({ items: [...items, { ...item, quantity: 1 }] })
+          // Track new item added
+          trackAddToCart({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: 1,
+            type: item.type,
+          })
         }
       },
       
       removeItem: (id) => {
+        const item = get().items.find((i) => i.id === id)
+        if (item) {
+          trackRemoveFromCart({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+          })
+        }
         set({ items: get().items.filter((item) => item.id !== id) })
       },
       
       updateQuantity: (id, quantity) => {
+        const item = get().items.find((i) => i.id === id)
+        
         if (quantity <= 0) {
           get().removeItem(id)
           return
+        }
+        
+        if (item) {
+          trackUpdateCartQuantity({
+            id: item.id,
+            name: item.name,
+            oldQuantity: item.quantity,
+            newQuantity: quantity,
+          })
         }
         
         set({
@@ -52,6 +88,13 @@ export const useCartStore = create<CartState>()(
       },
       
       clearCart: () => {
+        const itemCount = get().getTotalItems()
+        const totalAmount = get().getTotalAmount()
+        
+        if (itemCount > 0) {
+          trackClearCart(itemCount, totalAmount)
+        }
+        
         set({ items: [] })
       },
       

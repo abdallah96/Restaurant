@@ -8,6 +8,13 @@ import { useCartStore } from '@/lib/store/cart';
 import { MenuItem as MenuItemType, DailySpecial } from '@/types';
 import toast, { Toaster } from 'react-hot-toast';
 import Link from 'next/link';
+import { 
+  trackPageView, 
+  trackCategoryFilter, 
+  trackCheckoutInitiated, 
+  trackOrderPlaced, 
+  trackOrderTypeSelected 
+} from '@/lib/analytics';
 
 export default function OrderPage() {
   const [menuItems, setMenuItems] = useState<MenuItemType[]>([]);
@@ -30,7 +37,31 @@ export default function OrderPage() {
 
   useEffect(() => {
     fetchMenuData();
+    trackPageView('order');
   }, []);
+  
+  // Track when user scrolls to checkout section
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      const checkoutElement = document.getElementById('checkout');
+      if (!checkoutElement) return;
+      
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              trackCheckoutInitiated(getTotalAmount(), cartItems.length);
+              observer.disconnect(); // Only track once per session
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+      
+      observer.observe(checkoutElement);
+      return () => observer.disconnect();
+    }
+  }, [cartItems, getTotalAmount]);
 
   const fetchMenuData = async () => {
     try {
@@ -78,6 +109,19 @@ export default function OrderPage() {
 
       const data = await response.json();
       if (data.success) {
+        // Track successful order
+        trackOrderPlaced({
+          items: cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          totalAmount: getTotalAmount(),
+          orderType: formData.orderType,
+          itemCount: cartItems.length,
+        });
+        
         setSuccess(true);
         clearCart();
         toast.success('Commande envoyée avec succès!');
@@ -163,7 +207,10 @@ export default function OrderPage() {
                 {categories.map((category) => (
                   <button
                     key={category}
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => {
+                      setSelectedCategory(category);
+                      trackCategoryFilter(category);
+                    }}
                     className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                       selectedCategory === category
                         ? 'bg-orange-500 text-white'
@@ -215,7 +262,7 @@ export default function OrderPage() {
                       required
                       value={formData.customerName}
                       onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                       placeholder="Votre nom"
                     />
                   </div>
@@ -229,7 +276,7 @@ export default function OrderPage() {
                       required
                       value={formData.customerPhone}
                       onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                       placeholder="+221 XX XXX XX XX"
                     />
                   </div>
@@ -243,7 +290,7 @@ export default function OrderPage() {
                     type="email"
                     value={formData.customerEmail}
                     onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                     placeholder="email@example.com"
                   />
                 </div>
@@ -258,7 +305,10 @@ export default function OrderPage() {
                         type="radio"
                         value="pickup"
                         checked={formData.orderType === 'pickup'}
-                        onChange={(e) => setFormData({ ...formData, orderType: e.target.value as 'pickup' })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, orderType: e.target.value as 'pickup' });
+                          trackOrderTypeSelected('pickup');
+                        }}
                         className="mr-2"
                       />
                       <span>À emporter</span>
@@ -268,7 +318,10 @@ export default function OrderPage() {
                         type="radio"
                         value="delivery"
                         checked={formData.orderType === 'delivery'}
-                        onChange={(e) => setFormData({ ...formData, orderType: e.target.value as 'delivery' })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, orderType: e.target.value as 'delivery' });
+                          trackOrderTypeSelected('delivery');
+                        }}
                         className="mr-2"
                       />
                       <span>Livraison</span>
@@ -285,7 +338,7 @@ export default function OrderPage() {
                       required={formData.orderType === 'delivery'}
                       value={formData.deliveryAddress}
                       onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                       placeholder="Votre adresse complète"
                       rows={3}
                     />
@@ -299,7 +352,7 @@ export default function OrderPage() {
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                     placeholder="Instructions spéciales, allergies, etc."
                     rows={3}
                   />

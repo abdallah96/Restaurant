@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { DailySpecial } from '@/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { trackPageView, trackDailySpecialView } from '@/lib/analytics';
 
 export default function DailyMenuPage() {
   const [dailySpecials, setDailySpecials] = useState<DailySpecial[]>([]);
@@ -11,6 +12,7 @@ export default function DailyMenuPage() {
 
   useEffect(() => {
     fetchDailyMenu();
+    trackPageView('daily_menu');
   }, []);
 
   const fetchDailyMenu = async () => {
@@ -89,6 +91,7 @@ export default function DailyMenuPage() {
                   <div
                     key={item.id}
                     className="group bg-gradient-to-br from-white to-orange-50 rounded-xl p-6 hover:shadow-2xl transition-all transform hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300"
+                    onClick={() => trackDailySpecialView(item.id, item.name)}
                   >
                     <div className="h-40 bg-gradient-to-br from-orange-200 via-orange-200 to-orange-100 rounded-xl flex items-center justify-center mb-5 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-orange-400/30 to-transparent"></div>

@@ -127,6 +127,15 @@ input:focus, textarea:focus, select:focus {
   ring-color: var(--primary);
 }
 
+/* Ensure input text is always visible and black */
+input, textarea, select {
+  color: #111827 !important; /* text-gray-900 */
+}
+
+input::placeholder, textarea::placeholder {
+  color: #9ca3af !important; /* text-gray-400 */
+}
+
 /* Loading spinner */
 @keyframes spin {
   to { transform: rotate(360deg); }

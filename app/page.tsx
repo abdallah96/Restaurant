@@ -1,8 +1,16 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import { useEffect } from 'react';
+import { trackPageView } from '@/lib/analytics';
 
 export default function Home() {
+  useEffect(() => {
+    trackPageView('home');
+  }, []);
+  
   return (
     <main className="flex-1">
       {/* Hero Section with Unique Asymmetric Design */}
@@ -23,14 +31,14 @@ export default function Home() {
                     🇸🇳 Authentique 100%
                   </span>
                 </div>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight text-orange-500">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight text-white-900">
                   Bienvenue chez
-                  <span className="block mt-2 handwritten text-6xl md:text-8xl text-orange-400 squiggle-underline">
+                  <span className="block mt-2 handwritten text-6xl md:text-8xl text-white-400 squiggle-underline">
                     Keur Gui
                   </span>
                 </h1>
                 <div className="relative inline-block mb-6">
-                  <p className="text-lg md:text-xl text-orange-500 mb-2 font-bold">
+                  <p className="text-lg md:text-xl text-white-500 mb-2 font-bold">
                     Le goût du Sénégal dans chaque bouchée
                   </p>
                 </div>
@@ -74,10 +82,10 @@ export default function Home() {
                   </div>
                   {/* Decorative sticker badges */}
                   <div className="absolute -top-4 -right-4 sticker bg-white border-2 border-orange-500 text-orange-600 px-4 py-2 rounded-full text-xs font-bold shadow-xl">
-                    Fresh! 🌿
+                    Rapide! 🌿
                   </div>
                   <div className="absolute -bottom-2 -left-2 sticker bg-white border-2 border-orange-500 text-orange-600 px-4 py-2 rounded-full text-xs font-bold shadow-xl">
-                    Hot! 🔥
+                    Délicieux! 🔥
                   </div>
                 </div>
               </div>
