@@ -118,8 +118,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send WhatsApp notification
-    await sendWhatsAppNotification(order, items);
+    // Send WhatsApp notification to all staff
+    await sendWhatsAppNotificationToStaff(order, items);
 
     return NextResponse.json({ success: true, data: order }, { status: 201 });
   } catch (error: any) {
@@ -132,18 +132,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function sendWhatsAppNotification(order: any, items: CartItem[]) {
+/**
+ * Send WhatsApp notification to all staff members
+ * Uses the notifyAllStaff function from Twilio client
+ */
+async function sendWhatsAppNotificationToStaff(order: any, items: CartItem[]) {
   try {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER; // e.g., +14155238886
-    const adminWhatsAppNumber = process.env.ADMIN_WHATSAPP_NUMBER; // Your number, e.g., +491776287739
+    // Dynamically import to avoid edge runtime issues
+    const { notifyAllStaff } = await import('@/lib/twilio/client');
     
-    if (!accountSid || !authToken || !twilioWhatsAppNumber || !adminWhatsAppNumber) {
-      console.log('⚠️ WhatsApp not configured. Set: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER, ADMIN_WHATSAPP_NUMBER');
-      return;
-    }
-
     const itemsList = items
       .map((item) => `- ${item.name} x${item.quantity} (${item.price.toLocaleString()} FCFA)`)
       .join('\n');
@@ -157,35 +154,11 @@ async function sendWhatsAppNotification(order: any, items: CartItem[]) {
       `💰 *Total:* ${order.total_amount.toLocaleString()} FCFA\n` +
       `${order.notes ? `\n📝 *Notes:* ${order.notes}` : ''}`;
 
-    // Twilio API endpoint
-    const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-    
-    // Create form data
-    const params = new URLSearchParams();
-    params.append('To', `whatsapp:${adminWhatsAppNumber}`);
-    params.append('From', `whatsapp:${twilioWhatsAppNumber}`);
-    params.append('Body', message);
-
-    // Send via Twilio
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
-      },
-      body: params.toString(),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('✅ WhatsApp notification sent successfully:', data.sid);
-    } else {
-      const error = await response.text();
-      console.error('❌ Twilio API error:', error);
-    }
+    // Send to all configured staff members
+    await notifyAllStaff(message);
     
   } catch (error) {
-    console.error('Failed to send WhatsApp notification:', error);
+    console.error('Failed to send WhatsApp notifications:', error);
     // Don't fail the order if notification fails
   }
 }
