@@ -1,22 +1,25 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
 import { OrderWithItems } from '@/types'
 import { Button } from '@/components/ui/Button'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 
 export default function AdminPage() {
-  const router = useRouter()
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
+  const [lastOrderCount, setLastOrderCount] = useState(0)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
+    // Initialize audio
+    audioRef.current = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIHGm98OShUBELTqXh8LVeGwY2jdTyy3krBSh+zPLaizsIHGS57OihUREMTKPh8LJcHAU2jdTyzHksBSuCzvLaiTYIGGO58OahUhILTKHg8LFaGwU2i9Pyy3krBi2DzvLbiTcIGWK48OafUxMKTKDf8LBZGgU1idLyyXgrBi+FzvLdiTgIG2O68OWhUxMLSp/f8K9XGQU1h9Dyx3cqBjGGzvLeiTkIG2S78OajVBIMSZzc8K1VGAU0hc/yx3YpBjKHzvLeiToIG2a98OGgVRINSJnb8KtTFwU0hM7yxXQoBjOIzvLfizsIG2e+8OCfVhIOSJfa8KhSFgU0g8zyxHMnBjSJzvLfizsIGmi/8N+eVxIOSJXZ8KdQFQU0gs3yxHInBjSKzvLgizsIG2nA8N6cWBIOSJTY8KVPFQQzgcvyxHEnBjSLzvLhijwIG2vB8NybWhIOSJPX8KRNFAQzgMnyxHAnBjSMzvLhijwIG2zC8NuaWxIPSJLV8KNMEwQzfsryw+8mBjONzvLhizwIG23D8NqYXBIPSJHU8KJKEgMzfsfxwu4lBTOOzvLhjDwIG27E8NiXXhIPSJDT8KBJEQMyfcbxwu0kBTOPzvLhjTwIG2/F8NeWXxIPSI/S8J9HEAMyesbywe0jBTOQzvLijTwIG3DG8NaUYRIPSI7R8J1FDwMxeMXxwe0iBTORzvLijjwIG3HH8NOTYBMPSM7Q8JtEDgMwd8Txwe0hBTOSzvLijzwIG3HI8NOSYRMPSI3Q8JpBDQMwdcPxwe0gBTOTzvLikDwIG3DJ8NKRYRMPSM3P8JhADAMvccLxwe0fBTOUzvLikTwIG3HK8NGQZBMPSI3O8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSI3O8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8A==')
+    
     fetchOrders()
-    // Refresh orders every 30 seconds
-    const interval = setInterval(fetchOrders, 30000)
+    // Refresh orders every 10 seconds
+    const interval = setInterval(fetchOrders, 10000)
     return () => clearInterval(interval)
   }, [])
 
@@ -26,7 +29,22 @@ export default function AdminPage() {
       const data = await response.json()
       
       if (data.success) {
-        setOrders(data.data || [])
+        const newOrders = data.data || []
+        
+        // Check for new orders and play notification sound
+        if (lastOrderCount > 0 && newOrders.length > lastOrderCount) {
+          // New order detected!
+          if (audioRef.current) {
+            audioRef.current.play().catch(e => console.log('Audio play failed:', e))
+          }
+          toast.success('🔔 Nouvelle commande re\u00e7ue!', {
+            duration: 5000,
+            icon: '🎉',
+          })
+        }
+        
+        setOrders(newOrders)
+        setLastOrderCount(newOrders.length)
       } else {
         toast.error('Erreur lors du chargement des commandes')
       }
@@ -60,19 +78,6 @@ export default function AdminPage() {
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/auth', { method: 'DELETE' })
-      toast.success('Déconnexion réussie')
-      setTimeout(() => {
-        router.push('/admin/login')
-        router.refresh()
-      }, 500)
-    } catch (error) {
-      console.error('Logout error:', error)
-      toast.error('Erreur de déconnexion')
-    }
-  }
 
   const filteredOrders = filter === 'all' 
     ? orders 
@@ -105,65 +110,55 @@ export default function AdminPage() {
   ]
 
   return (
-    <main className="flex-1 bg-neutral-50 min-h-screen">
-      <Toaster position="top-right" />
-      
-      <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">Tableau de bord</h1>
-              <p className="text-xl opacity-90">Gestion des commandes</p>
+    <div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-gray-100 hover:border-orange-300 transition-all card-hover">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm font-semibold text-gray-600">Total commandes</div>
+              <span className="text-3xl">📊</span>
             </div>
-            <button
-              onClick={handleLogout}
-              className="px-6 py-3 bg-white text-primary-600 rounded-lg font-semibold hover:bg-neutral-100 transition-colors flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Déconnexion
-            </button>
+            <div className="text-4xl font-bold gradient-text">{orders.length}</div>
           </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-neutral-600 mb-1">Total commandes</div>
-            <div className="text-3xl font-bold text-neutral-800">{orders.length}</div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-neutral-600 mb-1">En attente</div>
-            <div className="text-3xl font-bold text-yellow-600">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-orange-100 hover:border-orange-300 transition-all card-hover">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm font-semibold text-gray-600">En attente</div>
+              <span className="text-3xl">⌛</span>
+            </div>
+            <div className="text-4xl font-bold text-orange-500">
               {orders.filter(o => o.status === 'pending').length}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-neutral-600 mb-1">En cours</div>
-            <div className="text-3xl font-bold text-blue-600">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-orange-100 hover:border-orange-300 transition-all card-hover">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm font-semibold text-gray-600">En cours</div>
+              <span className="text-3xl">👨‍🍳</span>
+            </div>
+            <div className="text-4xl font-bold text-orange-500">
               {orders.filter(o => ['confirmed', 'preparing', 'ready'].includes(o.status)).length}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-neutral-600 mb-1">Livrées</div>
-            <div className="text-3xl font-bold text-green-600">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-orange-100 hover:border-orange-300 transition-all card-hover">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm font-semibold text-gray-600">Livrées</div>
+              <span className="text-3xl">✅</span>
+            </div>
+            <div className="text-4xl font-bold text-orange-600">
               {orders.filter(o => o.status === 'delivered').length}
             </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border-2 border-gray-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span>📋</span> Filtrer les commandes
+          </h3>
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-5 py-2.5 rounded-xl font-bold transition-all transform hover:scale-105 ${
                 filter === 'all'
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Toutes ({orders.length})
@@ -172,10 +167,10 @@ export default function AdminPage() {
               <button
                 key={value}
                 onClick={() => setFilter(value)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   filter === value
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 {label} ({orders.filter(o => o.status === value).length})
@@ -184,30 +179,30 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Orders List */}
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-neutral-600">Chargement...</p>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            <p className="mt-4 text-gray-600">Chargement...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-neutral-600">Aucune commande</p>
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <p className="text-gray-600">Aucune commande</p>
           </div>
         ) : (
           <div className="space-y-4">
             {filteredOrders.map((order) => (
-              <div key={order.id} className="bg-white rounded-lg shadow p-6">
+              <div key={order.id} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex flex-wrap items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-neutral-800">
+                      <h3 className="text-xl font-bold text-gray-900">
                         Commande #{order.id.slice(0, 8)}
                       </h3>
                       <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[order.status as keyof typeof statusColors]}`}>
                         {statusLabels[order.status as keyof typeof statusLabels]}
                       </span>
                     </div>
-                    <div className="text-sm text-neutral-600 space-y-1">
+                    <div className="text-sm text-gray-600 space-y-1">
                       <p>📅 {format(new Date(order.created_at), 'dd/MM/yyyy HH:mm')}</p>
                       <p>👤 {order.customer_name}</p>
                       <p>📞 {order.customer_phone}</p>
@@ -237,24 +232,23 @@ export default function AdminPage() {
                   )}
                 </div>
 
-                {/* Order Items */}
-                <div className="border-t border-neutral-200 pt-4">
-                  <h4 className="font-semibold text-neutral-800 mb-3">Articles:</h4>
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <h4 className="font-semibold text-gray-900 mb-3">Articles:</h4>
                   <div className="space-y-2">
                     {order.items?.map((item) => (
                       <div key={item.id} className="flex justify-between items-center">
-                        <span className="text-neutral-700">
+                        <span className="text-gray-700">
                           {item.item_name} x{item.quantity}
                         </span>
-                        <span className="font-semibold text-neutral-800">
+                        <span className="font-semibold text-gray-900">
                           {item.subtotal.toLocaleString()} FCFA
                         </span>
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-neutral-200 mt-3 pt-3 flex justify-between items-center">
-                    <span className="font-bold text-lg">Total:</span>
-                    <span className="font-bold text-2xl text-primary-500">
+                  <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center">
+                    <span className="font-bold text-lg text-gray-900">Total:</span>
+                    <span className="font-bold text-2xl text-orange-500">
                       {order.total_amount.toLocaleString()} FCFA
                     </span>
                   </div>
@@ -263,7 +257,6 @@ export default function AdminPage() {
             ))}
           </div>
         )}
-      </div>
-    </main>
+    </div>
   )
 }

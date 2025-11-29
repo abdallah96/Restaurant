@@ -26,47 +26,49 @@ export default function AdminLoginPage() {
 
       if (data.success) {
         toast.success('Connexion réussie!')
+        // Wait a bit for cookie to be set, then redirect
         setTimeout(() => {
-          router.push('/admin')
-          router.refresh()
-        }, 500)
+          window.location.href = '/admin'
+        }, 100)
       } else {
         toast.error(data.error || 'Erreur de connexion')
+        setLoading(false)
       }
     } catch (error) {
       console.error('Login error:', error)
       toast.error('Erreur de connexion')
-    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main className="flex-1 bg-gradient-to-br from-primary-50 via-white to-secondary-50 min-h-screen flex items-center justify-center px-4 py-12">
+    <main className="flex-1 relative bg-gradient-to-br from-orange-600 via-orange-500 to-orange-400 min-h-screen flex items-center justify-center px-4 py-12 overflow-hidden">
       <Toaster position="top-right" />
       
-      <div className="w-full max-w-md">
-        {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl items-center justify-center mb-4 shadow-lg">
-            <span className="text-white font-bold text-3xl">RS</span>
-          </div>
-          <h1 className="text-3xl font-bold text-neutral-800 mb-2">
+      {/* Background Elements */}
+      <div className="absolute inset-0 african-pattern opacity-20"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-orange-400 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-400 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      
+      <div className="w-full max-w-md relative z-10">
+        <div className="text-center mb-8 animate-fade-in">
+            <div className="inline-flex w-24 h-24 bg-white rounded-2xl items-center justify-center mb-6 shadow-2xl transform hover:scale-110 transition-transform">
+              <span className="text-5xl">👨‍🍳</span>
+            </div>
+          <h1 className="text-4xl font-bold text-orange-400 mb-3">
             Espace Administrateur
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-gray-900 text-lg font-medium bg-white/90 backdrop-blur-sm px-6 py-2 rounded-xl inline-block shadow-lg">
             Connectez-vous pour gérer votre restaurant
           </p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-neutral-100">
+        <div className="glass rounded-2xl shadow-2xl p-8 border border-white/30 animate-scale-in">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
             <div>
               <label 
                 htmlFor="email" 
-                className="block text-sm font-semibold text-neutral-700 mb-2"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Adresse email
               </label>
@@ -76,17 +78,16 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-neutral-800 bg-white"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white/90 transition-all"
                 placeholder="admin@restaurant.sn"
                 disabled={loading}
               />
             </div>
 
-            {/* Password Field */}
             <div>
               <label 
                 htmlFor="password" 
-                className="block text-sm font-semibold text-neutral-700 mb-2"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Mot de passe
               </label>
@@ -96,16 +97,15 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-neutral-800 bg-white"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white/90 transition-all"
                 placeholder="••••••••"
                 disabled={loading}
               />
             </div>
 
-            {/* Submit Button */}
-            <Button
+              <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 shadow-xl transform hover:scale-105"
               size="lg"
               disabled={loading}
             >
@@ -118,22 +118,29 @@ export default function AdminLoginPage() {
                   Connexion...
                 </span>
               ) : (
-                'Se connecter'
+                <span className="flex items-center justify-center gap-2">
+                  <span className="text-xl">🔓</span>
+                  Se connecter
+                </span>
               )}
             </Button>
           </form>
 
-          {/* Info Message */}
-          <div className="mt-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-            <p className="text-sm text-neutral-600 text-center">
-              🔒 Connexion sécurisée pour les administrateurs uniquement
+          <div className="mt-6 p-4 bg-orange-50/80 rounded-xl border border-orange-200/50">
+            <p className="text-sm text-gray-700 text-center font-medium">
+              🔒 Connexion sécurisée réservée aux administrateurs
+            </p>
+          </div>
+          
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-800 font-medium">
+              Identifiants par défaut : <span className="font-mono bg-gray-200 px-2 py-1 rounded text-gray-900">admin@restaurant.sn</span> / <span className="font-mono bg-gray-200 px-2 py-1 rounded text-gray-900">admin123</span>
             </p>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-6 text-sm text-neutral-600">
-          <p>Restaurant Sénégalais &copy; {new Date().getFullYear()}</p>
+        <div className="text-center mt-6 text-sm">
+          <p className="text-gray-900 font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg inline-block">Keur Gui &copy; {new Date().getFullYear()}</p>
         </div>
       </div>
     </main>

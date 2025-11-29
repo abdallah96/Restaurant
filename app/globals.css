@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdfcfb;
+  --foreground: #166534;
+  --primary: #22c55e;
+  --orange: #f97316;
+  --accent-green: #16a34a;
+  --accent-orange: #ea580c;
 }
 
 @theme inline {
@@ -14,15 +18,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a2814;
+    --foreground: #dcfce7;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 /* Smooth scrolling */
@@ -34,7 +38,7 @@ html {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -45,7 +49,7 @@ html {
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-30px);
   }
   to {
     opacity: 1;
@@ -56,7 +60,7 @@ html {
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -64,8 +68,35 @@ html {
   }
 }
 
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .animate-slide-in {
@@ -73,17 +104,27 @@ html {
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s ease-out;
+  animation: scaleIn 0.4s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 /* Smooth transitions for all interactive elements */
 button, a, input, textarea, select {
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Enhanced focus states */
 input:focus, textarea:focus, select:focus {
   outline: none;
+  ring: 2px;
+  ring-color: var(--primary);
 }
 
 /* Loading spinner */
@@ -97,10 +138,127 @@ input:focus, textarea:focus, select:focus {
 
 /* Card hover effect */
 .card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(34, 197, 94, 0.25), 0 20px 25px -5px rgba(249, 115, 22, 0.1);
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* African pattern overlay - Organic Kente cloth inspired */
+.african-pattern {
+  background-image: 
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(34, 197, 94, 0.03) 10px, rgba(34, 197, 94, 0.03) 20px),
+    repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(249, 115, 22, 0.03) 10px, rgba(249, 115, 22, 0.03) 20px),
+    repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(234, 88, 12, 0.02) 15px, rgba(234, 88, 12, 0.02) 30px);
+}
+
+/* Hand-drawn underline effect */
+.squiggle-underline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10'%3E%3Cpath d='M0,5 Q10,2 20,5 T40,5 T60,5 T80,5 T100,5 T120,5 T140,5 T160,5 T180,5 T200,5' fill='none' stroke='%23f97316' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-size: 100% 8px;
+  padding-bottom: 8px;
+}
+
+/* Organic blob shapes */
+.blob-green {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.blob-orange {
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+/* Handwritten text effect */
+.handwritten {
+  font-family: var(--font-caveat), 'Caveat', cursive;
+  font-weight: 700;
+  transform: rotate(-2deg);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Neon glow effect */
+.neon-green {
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.8),
+               0 0 20px rgba(34, 197, 94, 0.5),
+               0 0 30px rgba(34, 197, 94, 0.3);
+}
+
+.neon-orange {
+  text-shadow: 0 0 10px rgba(249, 115, 22, 0.8),
+               0 0 20px rgba(249, 115, 22, 0.5),
+               0 0 30px rgba(249, 115, 22, 0.3);
+}
+
+/* Sticker/badge effect */
+.sticker {
+  position: relative;
+  transform: rotate(-3deg);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+              0 2px 4px -1px rgba(0, 0, 0, 0.06),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.sticker::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Torn paper effect */
+.torn-edge {
+  position: relative;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+}
+
+.torn-edge::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background-image: linear-gradient(45deg, transparent 33.33%, white 33.33%, white 66.66%, transparent 66.66%),
+                    linear-gradient(-45deg, transparent 33.33%, white 33.33%, white 66.66%, transparent 66.66%);
+  background-size: 20px 10px;
+  background-position: 0 0, 10px 0;
+  background-repeat: repeat-x;
+}
+
+/* Text contrast utilities */
+.text-contrast-dark {
+  color: #1f2937 !important;
+  font-weight: 600;
+}
+
+.text-contrast-light {
+  color: #ffffff !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }

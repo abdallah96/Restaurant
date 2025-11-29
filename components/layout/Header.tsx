@@ -1,46 +1,56 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <nav className="container mx-auto px-4 py-4">
+    <header className="glass sticky top-0 z-50 shadow-lg border-b border-orange-100/50">
+      <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">RS</span>
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative w-14 h-14 flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <Image
+                src="/images/logo.svg"
+                alt="Keur Gui Logo"
+                width={56}
+                height={56}
+                className="object-contain drop-shadow-lg"
+                priority
+              />
             </div>
-            <span className="text-xl font-bold text-neutral-800 hidden sm:inline">Restaurant Sénégalais</span>
+            <div className="hidden sm:block">
+              <span className="text-xl font-bold gradient-text block leading-tight">Keur Gui</span>
+              <span className="text-xs text-gray-600 font-medium">🇸🇳 Restaurant Sénégalais</span>
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-neutral-700 hover:text-primary-500 font-medium transition-colors">
-              Accueil
+          <div className="hidden md:flex items-center space-x-6">
+            <Link href="/" className="text-gray-700 hover:text-orange-600 font-semibold transition-all hover:scale-105 relative group">
+              <span>Accueil</span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/menu" className="text-neutral-700 hover:text-primary-500 font-medium transition-colors">
-              Menu Fast Food
+            <Link href="/menu" className="text-gray-700 hover:text-orange-600 font-semibold transition-all hover:scale-105 relative group">
+              <span>Menu Fast Food</span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/daily-menu" className="text-neutral-700 hover:text-primary-500 font-medium transition-colors">
-              Menu du Jour
+            <Link href="/daily-menu" className="text-gray-700 hover:text-orange-600 font-semibold transition-all hover:scale-105 relative group">
+              <span>Menu du Jour</span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/admin" className="text-neutral-700 hover:text-secondary-500 font-medium transition-colors">
+            <Link href="/admin" className="text-gray-600 hover:text-gray-800 font-medium transition-colors text-sm">
               Admin
             </Link>
-            <Link href="/order" className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 font-semibold transition-colors">
-              Commander
+            <Link href="/order" className="bg-white border-2 border-orange-500 text-orange-600 px-6 py-2.5 rounded-full hover:bg-gray-100 font-bold transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+              🛒 Commander
             </Link>
           </div>
 
-
-          {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-neutral-700 hover:text-primary-500"
+            className="md:hidden text-gray-700 hover:text-orange-500 p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -56,40 +66,39 @@ export function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 space-y-3 border-t border-neutral-200 pt-4">
+          <div className="md:hidden mt-4 pb-4 space-y-2 border-t border-gray-100 pt-4">
             <Link
               href="/"
-              className="block text-neutral-700 hover:text-primary-500 font-medium transition-colors"
+              className="block text-gray-700 hover:text-orange-500 font-medium transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Accueil
             </Link>
             <Link
               href="/menu"
-              className="block text-neutral-700 hover:text-primary-500 font-medium transition-colors"
+              className="block text-gray-700 hover:text-orange-500 font-medium transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Menu Fast Food
             </Link>
             <Link
               href="/daily-menu"
-              className="block text-neutral-700 hover:text-primary-500 font-medium transition-colors"
+              className="block text-gray-700 hover:text-orange-500 font-medium transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Menu du Jour
             </Link>
             <Link
               href="/admin"
-              className="block text-neutral-700 hover:text-secondary-500 font-medium transition-colors"
+              className="block text-gray-700 hover:text-orange-500 font-medium transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Admin
             </Link>
             <Link
               href="/order"
-              className="block bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 font-semibold transition-colors text-center"
+              className="block bg-white border-2 border-orange-500 text-orange-600 px-6 py-2 rounded-lg hover:bg-gray-100 font-semibold transition-colors text-center mt-4"
               onClick={() => setMobileMenuOpen(false)}
             >
               Commander

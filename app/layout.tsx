@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -14,8 +14,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["700"],
+});
+
 export const metadata: Metadata = {
-  title: "Restaurant Sénégalais - Fast Food & Menu du Jour",
+  title: "Keur Gui - Restaurant Sénégalais | Fast Food & Menu du Jour",
   description: "Découvrez les saveurs authentiques du Sénégal avec notre fast food et notre menu du jour traditionnel.",
 };
 
@@ -27,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased flex flex-col min-h-screen`}
       >
         <Header />
         {children}

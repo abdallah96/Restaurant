@@ -27,7 +27,7 @@ export function MenuItem({ item, type }: MenuItemProps) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       {item.image_url && (
-        <div className="h-48 bg-neutral-200 overflow-hidden">
+        <div className="h-48 bg-gray-100 overflow-hidden">
           <img
             src={item.image_url}
             alt={item.name}
@@ -36,12 +36,12 @@ export function MenuItem({ item, type }: MenuItemProps) {
         </div>
       )}
       <div className="p-4">
-        <h3 className="text-lg font-bold text-neutral-800 mb-2">{item.name}</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-2">{item.name}</h3>
         {item.description && (
-          <p className="text-sm text-neutral-600 mb-3">{item.description}</p>
+          <p className="text-sm text-gray-600 mb-3">{item.description}</p>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-xl font-bold text-primary-500">
+          <span className="text-xl font-bold text-orange-500">
             {item.price.toLocaleString()} FCFA
           </span>
           <Button onClick={handleAddToCart} size="sm">

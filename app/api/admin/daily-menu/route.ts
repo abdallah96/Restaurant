@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { verifyToken } from '@/lib/auth/jwt';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const token = request.cookies.get('admin_session')?.value;
+    if (!token || !(await verifyToken(token))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('daily_specials')
@@ -22,6 +28,11 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get('admin_session')?.value;
+    if (!token || !(await verifyToken(token))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = await createClient();
     const body = await request.json();
 
@@ -52,6 +63,11 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const token = request.cookies.get('admin_session')?.value;
+    if (!token || !(await verifyToken(token))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = await createClient();
     const body = await request.json();
     const { id, ...updates } = body;
@@ -83,6 +99,11 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const token = request.cookies.get('admin_session')?.value;
+    if (!token || !(await verifyToken(token))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = await createClient();
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');

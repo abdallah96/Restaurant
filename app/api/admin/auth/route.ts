@@ -5,35 +5,48 @@ import { serialize } from 'cookie';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, password } = body;
+    const contentType = request.headers.get('content-type') || '';
+    let email: string, password: string;
+    
+    if (contentType.includes('application/json')) {
+      const body = await request.json();
+      email = body.email;
+      password = body.password;
+    } else {
+      const formData = await request.formData();
+      email = formData.get('email') as string;
+      password = formData.get('password') as string;
+    }
 
     if (!email || !password) {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { success: false, error: 'Email et mot de passe requis' },
         { status: 400 }
       );
+      return errorResponse;
     }
 
     const isValid = dataStore.verifyAdmin(email, password);
 
     if (!isValid) {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { success: false, error: 'Identifiants invalides' },
         { status: 401 }
       );
+      return errorResponse;
     }
 
     const user = dataStore.getAdminUser(email);
     if (!user) {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { success: false, error: 'Utilisateur non trouvé' },
         { status: 404 }
       );
+      return errorResponse;
     }
 
     // Create JWT token
-    const token = signToken({
+    const token = await signToken({
       userId: user.id,
       email: user.email,
       role: user.role,
@@ -57,7 +70,6 @@ export async function POST(request: NextRequest) {
         authenticated: true 
       },
     });
-
     response.headers.set('Set-Cookie', cookie);
     return response;
   } catch (error) {

@@ -100,20 +100,22 @@ export default function OrderPage() {
 
   if (success) {
     return (
-      <main className="flex-1 bg-neutral-50 flex items-center justify-center py-16">
+      <main className="flex-1 bg-white flex items-center justify-center py-16 min-h-screen">
         <Toaster position="top-right" />
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-4xl">✓</span>
+        <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md text-center border-2 border-orange-200">
+          <div className="w-24 h-24 bg-gradient-to-br from-orange-500 to-orange-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <span className="text-5xl text-white">✓</span>
           </div>
-          <h2 className="text-3xl font-bold text-neutral-800 mb-4">
+          <h2 className="text-4xl font-bold text-orange-500 mb-4">
             Commande confirmée !
           </h2>
-          <p className="text-neutral-600 mb-6">
+          <p className="text-orange-700 mb-8 text-lg">
             Nous avons bien reçu votre commande. Vous serez contacté prochainement.
           </p>
           <Link href="/">
-            <Button>Retour à l'accueil</Button>
+            <Button className="bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500">
+              Retour à l'accueil
+            </Button>
           </Link>
         </div>
       </main>
@@ -121,30 +123,32 @@ export default function OrderPage() {
   }
 
   return (
-    <main className="flex-1 bg-neutral-50">
+      <main className="flex-1 bg-white min-h-screen">
       <Toaster position="top-right" />
       
-      <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-12">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">Commander</h1>
-          <p className="text-xl opacity-90">Choisissez vos plats et passez commande</p>
+      <div className="relative bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 py-16 overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-300 rounded-full blur-3xl"></div>
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <h1 className="text-5xl md:text-6xl font-bold mb-3 text-orange-400">Commander</h1>
+          <p className="text-2xl text-gray-900 font-medium bg-white/90 backdrop-blur-sm px-6 py-3 rounded-2xl inline-block shadow-lg">Choisissez vos plats et passez commande</p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Menu Section */}
           <div className="lg:col-span-2">
-            {/* Daily Specials */}
             {dailySpecials.length > 0 && (
               <section className="mb-12">
-                <div className="flex items-center gap-2 mb-6">
-                  <h2 className="text-3xl font-bold text-neutral-800">Menu du Jour</h2>
-                  <span className="bg-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <div className="flex items-center gap-3 mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Menu du Jour</h2>
+                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                     Spécial
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {dailySpecials.map((special) => (
                     <MenuItem key={special.id} item={special} type="daily_special" />
                   ))}
@@ -152,20 +156,18 @@ export default function OrderPage() {
               </section>
             )}
 
-            {/* Regular Menu */}
             <section>
-              <h2 className="text-3xl font-bold text-neutral-800 mb-6">Menu Fast Food</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Menu Fast Food</h2>
               
-              {/* Category Filter */}
               <div className="flex flex-wrap gap-2 mb-6">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                       selectedCategory === category
-                        ? 'bg-primary-500 text-white'
-                        : 'bg-white text-neutral-700 hover:bg-neutral-100'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                     }`}
                   >
                     {category === 'all' ? 'Tout' : category}
@@ -175,14 +177,14 @@ export default function OrderPage() {
 
               {loading ? (
                 <div className="text-center py-12">
-                  <p className="text-neutral-600">Chargement du menu...</p>
+                  <p className="text-gray-600">Chargement du menu...</p>
                 </div>
               ) : filteredMenuItems.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-neutral-600">Aucun article disponible</p>
+                  <p className="text-gray-600">Aucun article disponible</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {filteredMenuItems.map((item) => (
                     <MenuItem key={item.id} item={item} type="menu_item" />
                   ))}
@@ -201,11 +203,11 @@ export default function OrderPage() {
         {cartItems.length > 0 && (
           <div id="checkout" className="mt-12 max-w-3xl mx-auto">
             <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-3xl font-bold text-neutral-800 mb-6">Informations de commande</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Informations de commande</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Nom complet *
                     </label>
                     <input
@@ -213,13 +215,13 @@ export default function OrderPage() {
                       required
                       value={formData.customerName}
                       onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                      className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
                       placeholder="Votre nom"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Téléphone *
                     </label>
                     <input
@@ -227,27 +229,27 @@ export default function OrderPage() {
                       required
                       value={formData.customerPhone}
                       onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                      className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
                       placeholder="+221 XX XXX XX XX"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Email (optionnel)
                   </label>
                   <input
                     type="email"
                     value={formData.customerEmail}
                     onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
                     placeholder="email@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Type de commande *
                   </label>
                   <div className="flex gap-4">
@@ -276,14 +278,14 @@ export default function OrderPage() {
 
                 {formData.orderType === 'delivery' && (
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Adresse de livraison *
                     </label>
                     <textarea
                       required={formData.orderType === 'delivery'}
                       value={formData.deliveryAddress}
                       onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
-                      className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
                       placeholder="Votre adresse complète"
                       rows={3}
                     />
@@ -291,22 +293,22 @@ export default function OrderPage() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Notes (optionnel)
                   </label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-black"
                     placeholder="Instructions spéciales, allergies, etc."
                     rows={3}
                   />
                 </div>
 
-                <div className="bg-primary-50 p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-semibold">Total à payer:</span>
-                    <span className="text-2xl font-bold text-primary-500">
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-900">Total à payer:</span>
+                    <span className="text-2xl font-bold text-orange-500">
                       {getTotalAmount().toLocaleString()} FCFA
                     </span>
                   </div>

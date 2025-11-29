@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
+import { verifyToken } from '@/lib/auth/jwt';
 import { sendWhatsAppMessage, formatOrderStatusMessage } from '@/lib/twilio/client';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const token = request.cookies.get('admin_session')?.value;
+    if (!token || !(await verifyToken(token))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const supabase = createServiceClient();
     
     const { data: orders, error } = await supabase
       .from('orders')
@@ -34,7 +40,12 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const token = request.cookies.get('admin_session')?.value;
+    if (!token || !(await verifyToken(token))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const supabase = createServiceClient();
     const body = await request.json();
     const { orderId, status } = body;
     
