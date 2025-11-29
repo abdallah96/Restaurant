@@ -41,9 +41,6 @@ export function Header() {
               <span>Menu du Jour</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/admin" className="text-gray-600 hover:text-gray-800 font-medium transition-colors text-sm">
-              Admin
-            </Link>
             <Link href="/order" className="bg-white border-2 border-orange-500 text-orange-600 px-6 py-2.5 rounded-full hover:bg-gray-100 font-bold transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
               🛒 Commander
             </Link>

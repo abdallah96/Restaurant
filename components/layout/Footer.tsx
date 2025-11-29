@@ -27,17 +27,6 @@ export function Footer() {
             <p className="text-gray-900 text-sm leading-relaxed mb-4 font-medium bg-white/90 backdrop-blur-sm px-4 py-3 rounded-xl">
               Découvrez les saveurs authentiques du Sénégal. Fast food moderne et plats traditionnels préparés avec amour et passion.
             </p>
-            <div className="flex space-x-3">
-              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all hover:scale-110">
-                <span className="text-lg">📧</span>
-              </a>
-              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all hover:scale-110">
-                <span className="text-lg">📱</span>
-              </a>
-              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all hover:scale-110">
-                <span className="text-lg">🌐</span>
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -61,11 +50,6 @@ export function Footer() {
                   ➜ Commander
                 </Link>
               </li>
-              <li>
-                <Link href="/admin" className="text-gray-700 font-medium bg-white/70 px-3 py-1 rounded-lg inline-block hover:bg-white/90 transition-all text-xs">
-                  ➜ Administration
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -77,7 +61,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
                 <span>📍</span>
-                <span>Ouakam, Enface du Lycée Jean Mermoz</span>
+                <span>Ouakam, en face du Lycée Jean Mermoz</span>
               </li>
               <li className="flex items-start gap-2 text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
                 <span>📞</span>
