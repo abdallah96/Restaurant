@@ -89,9 +89,12 @@ export async function sendWhatsAppMessage(
   } catch (error: any) {
     // Check for sandbox connection error (63015)
     if (error?.code === 63015 || error?.code === 63007) {
-      console.error(`Sandbox error (${error.code}) for ${to}: Number not connected to sandbox or format mismatch`);
+      console.error(`❌ FAILED: ${to} - Sandbox error (${error.code})`);
+      console.error(`   Normalized format: whatsapp:${normalizePhoneNumber(to)}`);
+      console.error(`   Error: ${error.message}`);
+      console.error(`   Solution: Check Twilio Console → Sandbox Participants for exact format`);
     } else {
-      console.error(`Error sending WhatsApp message to ${to}:`, error?.message || error);
+      console.error(`❌ FAILED: ${to} - Error (${error?.code || 'Unknown'}): ${error?.message || error}`);
     }
     return false;
   }
@@ -108,11 +111,23 @@ export async function notifyAllStaff(message: string): Promise<void> {
     return;
   }
   
-  const promises = staffNumbers.map(async (number) => {
-    await sendWhatsAppMessage(number, message);
-  });
+  const results = await Promise.allSettled(
+    staffNumbers.map(async (number) => {
+      const success = await sendWhatsAppMessage(number, message);
+      return { number, success };
+    })
+  );
   
-  await Promise.allSettled(promises);
+  // Log summary of failures
+  const failed = results
+    .filter((r): r is PromiseFulfilledResult<{ number: string; success: boolean }> => 
+      r.status === 'fulfilled' && !r.value.success
+    )
+    .map(r => r.value.number);
+  
+  if (failed.length > 0) {
+    console.error(`Failed to send to ${failed.length} number(s): ${failed.join(', ')}`);
+  }
 }
 
 export function formatOrderStatusMessage(

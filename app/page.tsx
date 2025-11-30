@@ -39,7 +39,7 @@ export default function Home() {
                 </h1>
                 <div className="relative inline-block mb-6">
                   <p className="text-lg md:text-xl text-white-500 mb-2 font-bold">
-                    Le goût du Sénégal dans chaque bouchée
+                  L'excellence culinaire sénégalaise
                   </p>
                 </div>
                 <p className="text-base md:text-lg text-gray-900 mb-8 leading-relaxed max-w-lg font-medium bg-white/90 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg">
@@ -82,10 +82,14 @@ export default function Home() {
                   </div>
                   {/* Decorative sticker badges */}
                   <div className="absolute -top-4 -right-4 sticker bg-white border-2 border-orange-500 text-orange-600 px-4 py-2 rounded-full text-xs font-bold shadow-xl">
-                    Rapide! 🌿
+                    Fait avec amour! 💖
+
                   </div>
                   <div className="absolute -bottom-2 -left-2 sticker bg-white border-2 border-orange-500 text-orange-600 px-4 py-2 rounded-full text-xs font-bold shadow-xl">
-                    Délicieux! 🔥
+                    Délicieux! 🍔
+                  </div>
+                  <div className="absolute -bottom-2 -left-2 sticker bg-white border-2 border-orange-500 text-orange-600 px-4 py-2 rounded-full text-xs font-bold shadow-xl">
+                    Savoureux! 😋
                   </div>
                 </div>
               </div>
@@ -110,7 +114,7 @@ export default function Home() {
         
         <div className="container mx-auto px-6">
           <div className="text-center mb-12 md:mb-16">
-            <span className="inline-block handwritten text-orange-600 text-3xl md:text-4xl mb-2">Ce qui nous rend spéciaux</span>
+            <span className="inline-block handwritten text-orange-600 text-3xl md:text-4xl mb-2">Ce qui nous rend spécial</span>
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
               Pourquoi <span className="relative inline-block">
                 <span className="gradient-text">Keur Gui</span>

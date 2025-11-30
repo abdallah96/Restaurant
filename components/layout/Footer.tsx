@@ -89,7 +89,7 @@ export function Footer() {
               &copy; {new Date().getFullYear()} Keur Gui. Tous droits réservés.
             </p>
             <p className="text-gray-900 text-xs font-medium bg-white/80 px-4 py-2 rounded-lg">
-              Fait par G-Tech avec <span className="text-orange-600">♥</span> au Sénégal
+              By G-Tech
             </p>
           </div>
         </div>
