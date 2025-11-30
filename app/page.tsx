@@ -141,7 +141,7 @@ export default function Home() {
                   Fast Food Savoureux
                 </h3>
                 <p className="text-sm md:text-base text-gray-600 mb-5 leading-relaxed">
-                  Burgers juteux, poulet frit croustillant, sandwichs généreux. Prêts en 10 minutes chrono !
+                  Burgers juteux, poulet frit croustillant, sandwichs généreux. Prêts en 15 minutes chrono !
                 </p>
                 <Link
                   href="/menu"

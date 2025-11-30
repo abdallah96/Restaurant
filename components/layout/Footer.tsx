@@ -75,7 +75,7 @@ export function Footer() {
                 <span>🕒</span>
                 <div>
                   <div>Lun-Sam</div>
-                  <div className="text-xs">10h00 - 00h00</div>
+                  <div className="text-xs">07:30 - 22:30</div>
                 </div>
               </li>
             </ul>
