@@ -20,6 +20,25 @@ export function getTwilioClient() {
 }
 
 /**
+ * Normalize phone number to E.164 format
+ * Removes spaces, dashes, parentheses, and ensures + prefix
+ */
+function normalizePhoneNumber(phone: string): string {
+  // Remove whatsapp: prefix if present
+  let cleaned = phone.replace(/^whatsapp:/i, '');
+  
+  // Remove all non-digit characters except +
+  cleaned = cleaned.replace(/[^\d+]/g, '');
+  
+  // Ensure it starts with +
+  if (!cleaned.startsWith('+')) {
+    cleaned = '+' + cleaned;
+  }
+  
+  return cleaned;
+}
+
+/**
  * Get all staff WhatsApp numbers from environment variables
  * Supports STAFF_WHATSAPP_1, STAFF_WHATSAPP_2, STAFF_WHATSAPP_3, etc.
  */
@@ -53,8 +72,9 @@ export async function sendWhatsAppMessage(
   }
 
   try {
-    // Format phone number for WhatsApp (must include country code)
-    const formattedTo = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`;
+    // Normalize phone numbers to ensure consistent format
+    const normalizedTo = normalizePhoneNumber(to);
+    const formattedTo = `whatsapp:${normalizedTo}`;
     const formattedFrom = whatsappNumber.startsWith('whatsapp:') 
       ? whatsappNumber 
       : `whatsapp:${whatsappNumber}`;
@@ -65,10 +85,14 @@ export async function sendWhatsAppMessage(
       to: formattedTo,
     });
 
-    console.log(`WhatsApp message sent to ${to}`);
     return true;
-  } catch (error) {
-    console.error('Error sending WhatsApp message:', error);
+  } catch (error: any) {
+    // Check for sandbox connection error (63015)
+    if (error?.code === 63015 || error?.code === 63007) {
+      console.error(`Sandbox error (${error.code}) for ${to}: Number not connected to sandbox or format mismatch`);
+    } else {
+      console.error(`Error sending WhatsApp message to ${to}:`, error?.message || error);
+    }
     return false;
   }
 }
@@ -80,19 +104,12 @@ export async function notifyAllStaff(message: string): Promise<void> {
   const staffNumbers = getStaffWhatsAppNumbers();
   
   if (staffNumbers.length === 0) {
-    console.warn('⚠️ No staff WhatsApp numbers configured. Add STAFF_WHATSAPP_1, STAFF_WHATSAPP_2, etc. to .env.local');
+    console.warn('No staff WhatsApp numbers configured. Add STAFF_WHATSAPP_1, STAFF_WHATSAPP_2, etc.');
     return;
   }
   
-  console.log(`📤 Sending notification to ${staffNumbers.length} staff member(s)...`);
-  
-  const promises = staffNumbers.map(async (number, index) => {
-    try {
-      await sendWhatsAppMessage(number, message);
-      console.log(`✅ Notification sent to staff ${index + 1}: ${number}`);
-    } catch (error) {
-      console.error(`❌ Failed to notify staff ${index + 1} (${number}):`, error);
-    }
+  const promises = staffNumbers.map(async (number) => {
+    await sendWhatsAppMessage(number, message);
   });
   
   await Promise.allSettled(promises);
