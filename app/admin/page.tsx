@@ -14,8 +14,17 @@ export default function AdminPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    // Initialize audio
-    audioRef.current = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIHGm98OShUBELTqXh8LVeGwY2jdTyy3krBSh+zPLaizsIHGS57OihUREMTKPh8LJcHAU2jdTyzHksBSuCzvLaiTYIGGO58OahUhILTKHg8LFaGwU2i9Pyy3krBi2DzvLbiTcIGWK48OafUxMKTKDf8LBZGgU1idLyyXgrBi+FzvLdiTgIG2O68OWhUxMLSp/f8K9XGQU1h9Dyx3cqBjGGzvLeiTkIG2S78OajVBIMSZzc8K1VGAU0hc/yx3YpBjKHzvLeiToIG2a98OGgVRINSJnb8KtTFwU0hM7yxXQoBjOIzvLfizsIG2e+8OCfVhIOSJfa8KhSFgU0g8zyxHMnBjSJzvLfizsIGmi/8N+eVxIOSJXZ8KdQFQU0gs3yxHInBjSKzvLgizsIG2nA8N6cWBIOSJTY8KVPFQQzgcvyxHEnBjSLzvLhijwIG2vB8NybWhIOSJPX8KRNFAQzgMnyxHAnBjSMzvLhijwIG2zC8NuaWxIPSJLV8KNMEwQzfsryw+8mBjONzvLhizwIG23D8NqYXBIPSJHU8KJKEgMzfsfxwu4lBTOOzvLhjDwIG27E8NiXXhIPSJDT8KBJEQMyfcbxwu0kBTOPzvLhjTwIG2/F8NeWXxIPSI/S8J9HEAMyesbywe0jBTOQzvLijTwIG3DG8NaUYRIPSI7R8J1FDwMxeMXxwe0iBTORzvLijjwIG3HH8NOTYBMPSM7Q8JtEDgMwd8Txwe0hBTOSzvLijzwIG3HI8NOSYRMPSI3Q8JpBDQMwdcPxwe0gBTOTzvLikDwIG3DJ8NKRYRMPSM3P8JhADAMvccLxwe0fBTOUzvLikTwIG3HK8NGQZBMPSI3O8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSI3O8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8A==')
+    // Initialize audio with better error handling
+    try {
+      audioRef.current = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIHGm98OShUBELTqXh8LVeGwY2jdTyy3krBSh+zPLaizsIHGS57OihUREMTKPh8LJcHAU2jdTyzHksBSuCzvLaiTYIGGO58OahUhILTKHg8LFaGwU2i9Pyy3krBi2DzvLbiTcIGWK48OafUxMKTKDf8LBZGgU1idLyyXgrBi+FzvLdiTgIG2O68OWhUxMLSp/f8K9XGQU1h9Dyx3cqBjGGzvLeiTkIG2S78OajVBIMSZzc8K1VGAU0hc/yx3YpBjKHzvLeiToIG2a98OGgVRINSJnb8KtTFwU0hM7yxXQoBjOIzvLfizsIG2e+8OCfVhIOSJfa8KhSFgU0g8zyxHMnBjSJzvLfizsIGmi/8N+eVxIOSJXZ8KdQFQU0gs3yxHInBjSKzvLgizsIG2nA8N6cWBIOSJTY8KVPFQQzgcvyxHEnBjSLzvLhijwIG2vB8NybWhIOSJPX8KRNFAQzgMnyxHAnBjSMzvLhijwIG2zC8NuaWxIPSJLV8KNMEwQzfsryw+8mBjONzvLhizwIG23D8NqYXBIPSJHU8KJKEgMzfsfxwu4lBTOOzvLhjDwIG27E8NiXXhIPSJDT8KBJEQMyfcbxwu0kBTOPzvLhjTwIG2/F8NeWXxIPSI/S8J9HEAMyesbywe0jBTOQzvLijTwIG3DG8NaUYRIPSI7R8J1FDwMxeMXxwe0iBTORzvLijjwIG3HH8NOTYBMPSM7Q8JtEDgMwd8Txwe0hBTOSzvLijzwIG3HI8NOSYRMPSI3Q8JpBDQMwdcPxwe0gBTOTzvLikDwIG3DJ8NKRYRMPSM3P8JhADAMvccLxwe0fBTOUzvLikTwIG3HK8NGQZBMPSI3O8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSI3O8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8NDQZBMPSDzO8JZADAIucsHxwe0fBTOVzvLikTwIG3HJ8A==')
+      // Preload audio
+      if (audioRef.current) {
+        audioRef.current.volume = 0.7 // Set volume to 70%
+        audioRef.current.load()
+      }
+    } catch (error) {
+      console.error('Failed to initialize audio:', error)
+    }
     
     fetchOrders()
     // Refresh orders every 10 seconds
@@ -35,6 +44,22 @@ export default function AdminPage() {
         if (lastOrderCount > 0 && newOrders.length > lastOrderCount) {
           // New order detected!
           if (audioRef.current) {
+            // Reset audio to beginning and play
+            audioRef.current.currentTime = 0
+            audioRef.current.play().catch((error) => {
+              // Some browsers require user interaction before playing audio
+              console.log('Audio play failed (may require user interaction):', error);
+              // Fallback: try to play on next user interaction
+              const playOnInteraction = () => {
+                if (audioRef.current) {
+                  audioRef.current.play().catch(() => {});
+                }
+                document.removeEventListener('click', playOnInteraction);
+                document.removeEventListener('touchstart', playOnInteraction);
+              };
+              document.addEventListener('click', playOnInteraction, { once: true });
+              document.addEventListener('touchstart', playOnInteraction, { once: true });
+            });
           }
           toast.success('🔔 Nouvelle commande re\u00e7ue!', {
             duration: 5000,
@@ -208,6 +233,7 @@ export default function AdminPage() {
                       {order.customer_email && <p>✉️ {order.customer_email}</p>}
                       <p>📦 {order.order_type === 'delivery' ? 'Livraison' : 'À emporter'}</p>
                       {order.delivery_address && <p>📍 {order.delivery_address}</p>}
+                      <p>💳 {order.payment_method === 'pay_now' ? 'Orange Money (Payé)' : 'À la réception'}</p>
                       {order.notes && <p>📝 {order.notes}</p>}
                     </div>
                   </div>

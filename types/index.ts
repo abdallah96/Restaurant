@@ -33,6 +33,7 @@ export interface Order {
   delivery_address: string | null;
   delivery_zone: string | null;
   order_type: 'delivery' | 'pickup';
+  payment_method: 'pay_now' | 'pay_at_arrival' | null;
   status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
   total_amount: number;
   notes: string | null;
