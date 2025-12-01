@@ -3,18 +3,108 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { trackPageView } from '@/lib/analytics';
+import { MenuItem, DailySpecial } from '@/types';
+import { SlidingMenuCarousel } from '@/components/menu/SlidingMenuCarousel';
+import { DesktopMenuShowcase } from '@/components/menu/DesktopMenuShowcase';
 
 export default function Home() {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [dailySpecials, setDailySpecials] = useState<DailySpecial[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     trackPageView('home');
+    fetchMenuData();
   }, []);
+
+  const fetchMenuData = async () => {
+    try {
+      const [menuRes, dailyRes] = await Promise.all([
+        fetch('/api/menu'),
+        fetch('/api/menu/daily'),
+      ]);
+
+      const menuData = await menuRes.json();
+      const dailyData = await dailyRes.json();
+
+      if (menuData.success) {
+        setMenuItems(menuData.data || []);
+      }
+      if (dailyData.success) {
+        setDailySpecials(dailyData.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching menu:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   return (
     <main className="flex-1">
-      {/* Hero Section with Unique Asymmetric Design */}
-      <section className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-orange-500 py-16 md:py-24 overflow-hidden">
+      {/* Mobile Menu Section - Shown only on mobile */}
+      <section className="md:hidden bg-gradient-to-b from-orange-50 to-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Bienvenue chez <br/><span className="text-orange-600">Keur Gui</span>
+            </h1>
+          </div>
+
+          {/* Menu Fast Food - Sliding Carousel on Top */}
+          {menuItems.length > 0 && (
+            <div className="mb-8">
+              <SlidingMenuCarousel items={menuItems} />
+            </div>
+          )}
+
+          {/* Daily Menu - Centered Below - Bigger Card */}
+          {dailySpecials.length > 0 && (
+            <div className="flex flex-col items-center">
+              <Link href="/order#menu-du-jour" className="block w-full max-w-sm">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">Menu du Jour</h2>
+                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    ⭐ Spécial
+                  </span>
+                </div>
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+                  {dailySpecials[0]?.image_url ? (
+                    <Image
+                      src={dailySpecials[0].image_url}
+                      alt={dailySpecials[0].name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      sizes="(max-width: 384px) 100vw, 384px"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-orange-200 to-orange-300 flex items-center justify-center">
+                      <span className="text-8xl">🍲</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+                    <span className="text-white text-sm font-bold bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                      👆 Cliquez pour voir
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          {loading && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-orange-200 border-t-orange-600"></div>
+              <p className="mt-4 text-gray-600">Chargement...</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Hero Section with Unique Asymmetric Design - Hidden on mobile */}
+      <section className="hidden md:block relative bg-gradient-to-br from-orange-600 via-orange-500 to-orange-500 py-16 md:py-24 overflow-hidden">
         {/* Organic background shapes */}
         <div className="absolute inset-0 african-pattern opacity-30"></div>
         <div className="absolute top-10 right-20 w-72 h-72 blob-orange opacity-20 animate-pulse"></div>
@@ -45,23 +135,10 @@ export default function Home() {
                 <p className="text-base md:text-lg text-gray-900 mb-8 leading-relaxed max-w-lg font-medium bg-white/90 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg">
                   Fast food moderne rencontre tradition sénégalaise. Des saveurs authentiques, des ingrédients frais, et beaucoup d'amour dans chaque plat.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/order">
-                    <Button size="lg" className="w-full sm:w-auto bg-white hover:bg-gray-100 text-orange-600 shadow-2xl hover:shadow-xl transform hover:scale-105 border-2 border-orange-500">
-                      <span className="flex items-center gap-2 text-orange-500">
-                        <span className="text-2xl text-black">🍽️</span>
-                        Commander Maintenant
-                      </span>
-                    </Button>
-                  </Link>
-                  <Link href="/menu">
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white hover:bg-gray-100 border-2 border-gray-900 text-gray-900 hover:text-orange-600 shadow-xl">
-                      <span className="flex items-center gap-2">
-                        <span className="text-2xl">📖</span>
-                        Voir le Menu
-                      </span>
-                    </Button>
-                  </Link>
+                <div className="text-center md:text-left">
+                  <p className="text-lg text-white-500 font-semibold mb-2">
+                    👇 Découvrez nos plats ci-dessous
+                  </p>
                 </div>
               </div>
               
@@ -105,6 +182,13 @@ export default function Home() {
           </svg>
         </div>
       </section>
+
+      {/* Desktop Menu Showcase - Beautiful animated carousel */}
+      {menuItems.length > 0 && (
+        <section className="hidden md:block bg-gradient-to-b from-white via-orange-50/30 to-white relative overflow-hidden">
+          <DesktopMenuShowcase items={menuItems} />
+        </section>
+      )}
 
       {/* Features Section with Unique Cards */}
       <section className="py-16 md:py-20 bg-gradient-to-b from-sand-50 to-white relative">

@@ -35,8 +35,8 @@ export function MenuCard({ item, onAddToCart }: MenuCardProps) {
               {item.price.toLocaleString()} <span className="text-base">FCFA</span>
             </span>
             {item.is_available && (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-100  flex items-center gap-1">
-                <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse text-orange-600"></span>
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-black flex items-center gap-1">
+                <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
                 Disponible
               </span>
             )}

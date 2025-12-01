@@ -33,11 +33,24 @@ export default function OrderPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   
-  const { items: cartItems, clearCart, getTotalAmount } = useCartStore();
+  const { items: cartItems, clearCart, getTotalAmount, deliveryZone, setDeliveryZone, getDeliveryFee } = useCartStore();
 
   useEffect(() => {
     fetchMenuData();
     trackPageView('order');
+    
+    // Scroll to menu section if hash is present
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash === '#menu-fast-food' || hash === '#menu-du-jour') {
+        setTimeout(() => {
+          const element = document.getElementById(hash.substring(1));
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 300); // Small delay to ensure page is loaded
+      }
+    }
   }, []);
   
   // Track when user scrolls to checkout section
@@ -95,6 +108,11 @@ export default function OrderPage() {
       return;
     }
     
+    if (formData.orderType === 'delivery' && !deliveryZone) {
+      toast.error('Veuillez sélectionner une zone de livraison');
+      return;
+    }
+    
     setSubmitting(true);
 
     try {
@@ -104,6 +122,7 @@ export default function OrderPage() {
         body: JSON.stringify({
           ...formData,
           items: cartItems,
+          deliveryZone: formData.orderType === 'delivery' ? deliveryZone : null,
         }),
       });
 
@@ -185,7 +204,7 @@ export default function OrderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {dailySpecials.length > 0 && (
-              <section className="mb-12">
+              <section id="menu-du-jour" className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Menu du Jour</h2>
                   <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -200,7 +219,7 @@ export default function OrderPage() {
               </section>
             )}
 
-            <section>
+            <section id="menu-fast-food">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Menu Fast Food</h2>
               
               <div className="flex flex-wrap gap-2 mb-6">
@@ -307,6 +326,7 @@ export default function OrderPage() {
                         checked={formData.orderType === 'pickup'}
                         onChange={(e) => {
                           setFormData({ ...formData, orderType: e.target.value as 'pickup' });
+                          setDeliveryZone(null);
                           trackOrderTypeSelected('pickup');
                         }}
                         className="mr-2"
@@ -330,19 +350,38 @@ export default function OrderPage() {
                 </div>
 
                 {formData.orderType === 'delivery' && (
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Adresse de livraison *
-                    </label>
-                    <textarea
-                      required={formData.orderType === 'delivery'}
-                      value={formData.deliveryAddress}
-                      onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
-                      placeholder="Votre adresse complète"
-                      rows={3}
-                    />
-                  </div>
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Zone de livraison *
+                      </label>
+                      <select
+                        required={formData.orderType === 'delivery'}
+                        value={deliveryZone || ''}
+                        onChange={(e) => setDeliveryZone(e.target.value as 'ouakam' | 'yoff' | 'ville' | 'almadie' | null)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white"
+                      >
+                        <option value="">Sélectionnez une zone</option>
+                        <option value="ouakam">Ouakam - 1,000 FCFA</option>
+                        <option value="yoff">Yoff - 2,000 FCFA</option>
+                        <option value="ville">Ville - 2,000 FCFA</option>
+                        <option value="almadie">Almadie - 1,500 FCFA</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Adresse de livraison *
+                      </label>
+                      <textarea
+                        required={formData.orderType === 'delivery'}
+                        value={formData.deliveryAddress}
+                        onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                        placeholder="Votre adresse complète"
+                        rows={3}
+                      />
+                    </div>
+                  </>
                 )}
 
                 <div>
@@ -358,8 +397,22 @@ export default function OrderPage() {
                   />
                 </div>
 
-                <div className="bg-orange-50 p-4 rounded-lg">
+                <div className="bg-orange-50 p-4 rounded-lg space-y-2">
                   <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-900">Sous-total:</span>
+                    <span className="text-lg font-semibold text-gray-700">
+                      {(getTotalAmount() - getDeliveryFee()).toLocaleString()} FCFA
+                    </span>
+                  </div>
+                  {formData.orderType === 'delivery' && deliveryZone && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Frais de livraison ({deliveryZone}):</span>
+                      <span className="font-semibold text-gray-700">
+                        {getDeliveryFee().toLocaleString()} FCFA
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-2 border-t border-orange-200">
                     <span className="font-semibold text-gray-900">Total à payer:</span>
                     <span className="text-2xl font-bold text-orange-500">
                       {getTotalAmount().toLocaleString()} FCFA

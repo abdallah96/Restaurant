@@ -4,7 +4,7 @@ import { useCartStore } from '@/lib/store/cart'
 import { Button } from '@/components/ui/Button'
 
 export function Cart() {
-  const { items, removeItem, updateQuantity, getTotalAmount, getTotalItems } = useCartStore()
+  const { items, removeItem, updateQuantity, getTotalAmount, getTotalItems, deliveryZone, getDeliveryFee } = useCartStore()
 
   if (items.length === 0) {
     return (
@@ -16,7 +16,7 @@ export function Cart() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+    <div className="bg-white rounded-lg shadow-md p-6 sticky top-4 lg:top-6 max-h-[calc(100vh-2rem)] overflow-y-auto">
       <h2 className="text-xl font-bold text-gray-900 mb-4">
         Votre panier ({getTotalItems()})
       </h2>
@@ -57,8 +57,18 @@ export function Cart() {
         ))}
       </div>
 
-      <div className="border-t border-gray-200 pt-4 mb-4">
-        <div className="flex justify-between items-center text-lg font-bold text-gray-900">
+      <div className="border-t border-gray-200 pt-4 mb-4 space-y-2">
+        <div className="flex justify-between items-center text-sm text-gray-600">
+          <span>Sous-total:</span>
+          <span className="font-semibold">{(getTotalAmount() - getDeliveryFee()).toLocaleString()} FCFA</span>
+        </div>
+        {deliveryZone && (
+          <div className="flex justify-between items-center text-sm text-gray-600">
+            <span>Livraison ({deliveryZone}):</span>
+            <span className="font-semibold">{getDeliveryFee().toLocaleString()} FCFA</span>
+          </div>
+        )}
+        <div className="flex justify-between items-center text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
           <span>Total:</span>
           <span className="text-xl text-orange-500">{getTotalAmount().toLocaleString()} FCFA</span>
         </div>

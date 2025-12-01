@@ -8,7 +8,7 @@ export function Footer() {
       <div className="absolute inset-0 african-pattern opacity-10"></div>
       
       <div className="container mx-auto px-6 py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
@@ -53,6 +53,27 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Delivery Zones */}
+          <div>
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-orange-400">
+              <span>🚴</span> Zones de Livraison
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
+                Ouakam
+              </li>
+              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
+                Yoff
+              </li>
+              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
+                Ville
+              </li>
+              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
+                Almadie
+              </li>
+            </ul>
+          </div>
+
           {/* Contact Info */}
           <div>
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-orange-400">
@@ -88,9 +109,9 @@ export function Footer() {
             <p className="text-gray-900 text-sm font-medium bg-white/80 px-4 py-2 rounded-lg">
               &copy; {new Date().getFullYear()} Keur Gui. Tous droits réservés.
             </p>
-            <p className="text-gray-900 text-xs font-medium bg-white/80 px-4 py-2 rounded-lg">
+            <Link href="https://g-tech.dev" className="text-gray-900 text-xs font-medium bg-white/80 px-4 py-2 rounded-lg">
               By G-Tech
-            </p>
+            </Link>
           </div>
         </div>
       </div>

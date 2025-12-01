@@ -98,8 +98,8 @@ export default function MenuPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Prêt à commander ?</h3>
               <p className="text-gray-700 mb-6 font-medium">Ajoutez vos plats préférés au panier</p>
               <Link href="/order">
-                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-xl transform hover:scale-105">
-                  <span className="flex items-center gap-2">
+                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-xl transform hover:scale-105 text-white">
+                  <span className="flex items-center gap-2 text-white">
                     <span className="text-2xl">🛒</span>
                     Passer une commande
                   </span>

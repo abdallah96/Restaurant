@@ -3,13 +3,26 @@ import { persist } from 'zustand/middleware'
 import { CartItem } from '@/types'
 import { trackAddToCart, trackRemoveFromCart, trackUpdateCartQuantity, trackClearCart } from '@/lib/analytics'
 
+export type DeliveryZone = 'ouakam' | 'yoff' | 'ville' | 'almadie' | null
+
+const DELIVERY_ZONE_PRICES: Record<DeliveryZone, number> = {
+  ouakam: 1000,
+  yoff: 2000,
+  ville: 2000,
+  almadie: 1500,
+  null: 0,
+}
+
 interface CartState {
   items: CartItem[]
+  deliveryZone: DeliveryZone
   addItem: (item: Omit<CartItem, 'quantity'>) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
+  setDeliveryZone: (zone: DeliveryZone) => void
   getTotalAmount: () => number
+  getDeliveryFee: () => number
   getTotalItems: () => number
 }
 
@@ -17,6 +30,7 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      deliveryZone: null,
       
       addItem: (item) => {
         const items = get().items
@@ -95,14 +109,25 @@ export const useCartStore = create<CartState>()(
           trackClearCart(itemCount, totalAmount)
         }
         
-        set({ items: [] })
+        set({ items: [], deliveryZone: null })
+      },
+      
+      setDeliveryZone: (zone) => {
+        set({ deliveryZone: zone })
+      },
+      
+      getDeliveryFee: () => {
+        const zone = get().deliveryZone
+        return DELIVERY_ZONE_PRICES[zone] || 0
       },
       
       getTotalAmount: () => {
-        return get().items.reduce(
+        const itemsTotal = get().items.reduce(
           (total, item) => total + item.price * item.quantity,
           0
         )
+        const deliveryFee = get().getDeliveryFee()
+        return itemsTotal + deliveryFee
       },
       
       getTotalItems: () => {
