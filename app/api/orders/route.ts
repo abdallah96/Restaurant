@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { CartItem } from '@/types';
 
+// Delivery zone prices
+const DELIVERY_ZONE_PRICES: Record<string, number> = {
+  ouakam: 1000,
+  yoff: 2000,
+  ville: 2000,
+  almadie: 1500,
+};
+
+function getDeliveryFee(zone: string): number {
+  return DELIVERY_ZONE_PRICES[zone.toLowerCase()] || 0;
+}
+
 export async function GET() {
   try {
     const supabase = createServiceClient();
@@ -61,11 +73,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calculate total amount
+    // Calculate total amount (items + delivery fee)
     const items: CartItem[] = body.items;
-    const totalAmount = items.reduce((sum, item) => {
+    const itemsTotal = items.reduce((sum, item) => {
       return sum + (item.price * item.quantity);
     }, 0);
+    
+    // Calculate delivery fee if delivery order
+    const deliveryZone = body.deliveryZone || null;
+    const deliveryFee = deliveryZone ? getDeliveryFee(deliveryZone) : 0;
+    const totalAmount = itemsTotal + deliveryFee;
 
     // Create order
     const { data: order, error: orderError } = await supabase
@@ -75,6 +92,7 @@ export async function POST(request: NextRequest) {
         customer_phone: body.customerPhone,
         customer_email: body.customerEmail || null,
         delivery_address: body.deliveryAddress || null,
+        delivery_zone: deliveryZone,
         order_type: body.orderType || 'pickup',
         total_amount: totalAmount,
         notes: body.notes || null,
@@ -149,6 +167,7 @@ async function sendWhatsAppNotificationToStaff(order: any, items: CartItem[]) {
       `👤 *Client:* ${order.customer_name}\n` +
       `📞 *Téléphone:* ${order.customer_phone}\n` +
       `📦 *Type:* ${order.order_type === 'delivery' ? 'Livraison' : 'À emporter'}\n` +
+      `${order.delivery_zone ? `🗺️ *Zone:* ${order.delivery_zone.charAt(0).toUpperCase() + order.delivery_zone.slice(1)} (${getDeliveryFee(order.delivery_zone).toLocaleString()} FCFA)\n` : ''}` +
       `${order.delivery_address ? `📍 *Adresse:* ${order.delivery_address}\n` : ''}` +
       `\n📋 *Articles:*\n${itemsList}\n\n` +
       `💰 *Total:* ${order.total_amount.toLocaleString()} FCFA\n` +

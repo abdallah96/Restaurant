@@ -31,6 +31,7 @@ export interface Order {
   customer_phone: string;
   customer_email: string | null;
   delivery_address: string | null;
+  delivery_zone: string | null;
   order_type: 'delivery' | 'pickup';
   status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
   total_amount: number;

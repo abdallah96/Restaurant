@@ -5,12 +5,13 @@ import { trackAddToCart, trackRemoveFromCart, trackUpdateCartQuantity, trackClea
 
 export type DeliveryZone = 'ouakam' | 'yoff' | 'ville' | 'almadie' | null
 
-const DELIVERY_ZONE_PRICES: Record<DeliveryZone, number> = {
+type DeliveryZoneKey = Exclude<DeliveryZone, null>
+
+const DELIVERY_ZONE_PRICES: Record<DeliveryZoneKey, number> = {
   ouakam: 1000,
   yoff: 2000,
   ville: 2000,
   almadie: 1500,
-  null: 0,
 }
 
 interface CartState {
@@ -118,6 +119,7 @@ export const useCartStore = create<CartState>()(
       
       getDeliveryFee: () => {
         const zone = get().deliveryZone
+        if (!zone) return 0
         return DELIVERY_ZONE_PRICES[zone] || 0
       },
       
