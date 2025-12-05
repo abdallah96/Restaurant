@@ -59,17 +59,17 @@ export function Footer() {
               <span>🚴</span> Zones de Livraison
             </h3>
             <ul className="space-y-2 text-sm">
-              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
-                Ouakam
+              <li className="text-gray-900 font-medium bg-white/60 px-3 py-2 rounded flex items-center gap-2">
+                <span className="text-green-600">✓</span> Ouakam
               </li>
-              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
-                Yoff
+              <li className="text-gray-900 font-medium bg-white/60 px-3 py-2 rounded flex items-center gap-2">
+                <span className="text-green-600">✓</span> Yoff
               </li>
-              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
-                Ville
+              <li className="text-gray-900 font-medium bg-white/60 px-3 py-2 rounded flex items-center gap-2">
+                <span className="text-green-600">✓</span> Ville
               </li>
-              <li className="text-gray-900 font-medium bg-white/80 px-3 py-2 rounded-lg">
-                Almadie
+              <li className="text-gray-900 font-medium bg-white/60 px-3 py-2 rounded flex items-center gap-2">
+                <span className="text-green-600">✓</span> Almadie
               </li>
             </ul>
           </div>
